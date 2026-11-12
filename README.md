@@ -8,7 +8,7 @@ Python chess engine in at most 4,096 bytes.
 `main.py` (3,938 bytes) unpacks an lzma payload and runs it. The engine
 itself is a 0x88 board with negamax alpha-beta search, quiescence search,
 a transposition table, killer-move ordering and piece-square evaluation,
-under a fixed 60,000-node budget per move — never a clock, so the trial's
+under a fixed 100,000-node budget per move — never a clock, so the trial's
 replay matches. Python 3.13 standard library only; it talks to the env
 alone over HTTP and calls no model.
 
@@ -22,9 +22,12 @@ byte from it.
   Kiwipete perft(1..2) = 48 / 2,039 — all correct.
 - Packed `main.py` picks the same move as the dev engine on start, middle
   game and tactical test positions, is deterministic across runs, and its
-  slowest tested move took 2.4 s (limit 10 s/move).
-- Played against the kit's local env server on practice trial-0 (see the
-  trial log in the workspace).
+  slowest tested move took 3.9 s (limit 10 s/move).
+- Clean 6-game trial vs the kit's gauntlet (practice trial-0, games 1-6):
+  2 won, 1 drawn, 3 lost — wins vs depth-2 (855 Elo) as White and Black,
+  a draw vs depth-4 (1,199 Elo) as Black; scorer Elo 976. The 60,000-node
+  version scored 1W-5L on the same six games, so the 100,000-node budget
+  is the stronger, submitted version.
 
 ## License
 
