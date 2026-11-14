@@ -1,33 +1,63 @@
-# tiny-chess-01 — the strongest chess engine in 4 KB
+# tiny-chess-01 — an original chess engine in 4 KB
 
-Entry for the make.fun bounty "tiny-chess-01" ($500): build the strongest
+Entry for the make.fun bounty "tiny-chess-01" ($500): the strongest
 Python chess engine in at most 4,096 bytes.
 
 ## The engine
 
-`main.py` (3,938 bytes) unpacks an lzma payload and runs it. The engine
-itself is a 0x88 board with negamax alpha-beta search, quiescence search,
-a transposition table, killer-move ordering and piece-square evaluation,
-under a fixed 100,000-node budget per move — never a clock, so the trial's
-replay matches. Python 3.13 standard library only; it talks to the env
-alone over HTTP and calls no model.
+`main.py` (4,060 bytes) is a packed entrypoint: `makefun compress` of
+the readable source `engine_src.py` (14,336 bytes, sent with the
+bundle, not part of the snapshot). The engine is a 0x88 board with
+negamax alpha-beta search, a transposition table, killer-move ordering,
+MVV-LVA move ordering, quiescence search, null-move pruning (depth
+>= 3, R = 2, only when not in check and with non-pawn material) and
+late move reductions (quiet moves after the first 3, depth >= 3,
+reduced 1 ply, re-searched at full depth if they beat alpha), and
+material + piece-square + bishop-pair evaluation, under a fixed
+60,000-node budget per move. No clock, no randomness: every move is
+derived from the position and the trial seed, so a replay is
+byte-identical. Python 3.13 standard library only; it talks to the
+env alone over HTTP and calls no model.
 
-The readable development version is `engine.py` in the author's workspace
-(`tiny-chess-01-dev/`); `pack.py` next to it reproduces `main.py` byte for
-byte from it.
+This is original code, written for this contest — not a fork of
+sunfish or any other engine. (A sunfish fork is allowed under its
+GPL-3.0-only licence with credit, but this entry does not use it.)
 
-## Verification (local, 2026-11-12)
+## Practice trials (kit practice set, 8 games each)
 
-- Move generation: perft(1..3) from the start position = 20 / 400 / 8,902,
-  Kiwipete perft(1..2) = 48 / 2,039 — all correct.
-- Packed `main.py` picks the same move as the dev engine on start, middle
-  game and tactical test positions, is deterministic across runs, and its
-  slowest tested move took 3.9 s (limit 10 s/move).
-- Clean 6-game trial vs the kit's gauntlet (practice trial-0, games 1-6):
-  2 won, 1 drawn, 3 lost — wins vs depth-2 (855 Elo) as White and Black,
-  a draw vs depth-4 (1,199 Elo) as Black; scorer Elo 976. The 60,000-node
-  version scored 1W-5L on the same six games, so the 100,000-node budget
-  is the stronger, submitted version.
+Round 3 engine (no NMP/LMR) — mean 1226, below the baseline:
+
+- trial-0: Elo 1253, 2 won, 2 drawn, 4 lost
+- trial-1: Elo 1253, 2 won, 2 drawn, 4 lost
+- trial-2: Elo 1173, 1 won, 3 drawn, 4 lost
+
+Round 4 engine (NMP + LMR) — mean 1384, above the baseline, but
+high variance:
+
+- trial-0: Elo 1396, 4 won, 0 drawn, 4 lost — beat depth-2, depth-3,
+  depth-4, nodes-500k; lost to nodes-100k, nodes-250k, nodes-1M,
+  nodes-2M
+- trial-1: Elo 1087, 2 won, 0 drawn, 6 lost — beat depth-2 and
+  depth-3 only; lost to depth-4 and all node-budget opponents
+- trial-2 (fresh): Elo 1669, 5 won, 2 drawn, 1 lost — beat depth-2,
+  depth-4, nodes-100k, nodes-250k, nodes-500k; drew depth-3 and
+  nodes-2M; lost only to nodes-1M
+
+Mean 1384 vs sunfish baseline 1325 (lead +59; per-trial leads +70 /
+-309 / +416). The mean clears the prize gate, but the 582-point
+spread between trials (1087 vs 1669) is far wider than the round 3
+engine's 80-point spread, so the final result on fresh openings is
+uncertain — it could land anywhere in that range. The round 3 mean
+(1226) is above the 1,154 practice floor but below the baseline, so
+it does not clear the prize gate as it stands.
+
+## Verification
+
+- Move generation: perft(1..3) from the start position = 20 / 400 /
+  8,902; Kiwipete perft(1..2) = 48 / 2,039 — all correct.
+- Deterministic: node-budgeted, no clock, no unseeded randomness.
+- Speed: a move takes about 2–3 s at 60,000 nodes (limit 10 s/move);
+  trial-2 ran 8 games in ~14 minutes, inside the 1,800 s wall budget.
 
 ## License
 
