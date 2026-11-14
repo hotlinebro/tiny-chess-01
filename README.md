@@ -32,24 +32,14 @@ Round 3 engine (no NMP/LMR) — mean 1226, below the baseline:
 - trial-2: Elo 1173, 1 won, 3 drawn, 4 lost
 
 Round 4 engine (NMP + LMR) — mean 1384, above the baseline, but
-high variance:
-
-- trial-0: Elo 1396, 4 won, 0 drawn, 4 lost — beat depth-2, depth-3,
-  depth-4, nodes-500k; lost to nodes-100k, nodes-250k, nodes-1M,
-  nodes-2M
-- trial-1: Elo 1087, 2 won, 0 drawn, 6 lost — beat depth-2 and
-  depth-3 only; lost to depth-4 and all node-budget opponents
-- trial-2 (fresh): Elo 1669, 5 won, 2 drawn, 1 lost — beat depth-2,
-  depth-4, nodes-100k, nodes-250k, nodes-500k; drew depth-3 and
-  nodes-2M; lost only to nodes-1M
+high variance: trial-0 Elo 1396 (4W-0D-4L), trial-1 Elo 1087
+(2W-0D-6L), trial-2 (fresh) Elo 1669 (5W-2D-1L).
 
 Mean 1384 vs sunfish baseline 1325 (lead +59; per-trial leads +70 /
 -309 / +416). The mean clears the prize gate, but the 582-point
-spread between trials (1087 vs 1669) is far wider than the round 3
-engine's 80-point spread, so the final result on fresh openings is
-uncertain — it could land anywhere in that range. The round 3 mean
-(1226) is above the 1,154 practice floor but below the baseline, so
-it does not clear the prize gate as it stands.
+spread (1087 vs 1669) is far wider than round 3's 80-point spread,
+so the final on fresh openings is uncertain. Round 3 mean (1226) is
+above the 1,154 practice floor but below the baseline.
 
 ## Verification
 
